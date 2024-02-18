@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumnos y Notas</title>
+    <style>
+        /* Estilos CSS */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .eliminar-btn {
+            padding: 5px 10px;
+            border: none;
+            background-color: #f44336;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .eliminar-btn:hover {
+            background-color: #cc0000;
+        }
+
+        #menu {
+            list-style-type: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        #menu li {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        #menu li a {
+            text-decoration: none;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            color: #333;
+            border-radius: 5px;
+        }
+
+        #menu li a:hover {
+            background-color: #e9e9e9;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Cliente Web</h1>
+    <ul id="menu">
+        <li><a href="cursos.html">Mostrar Cursos</a></li>
+        <li><a href="centros.html">Mostrar Centros</a></li>
+        <li><a href="alumnos.html">Mostrar Alumnos y Notas</a></li>
+        <li><a href="graficos.html">Mostrar Graficos</a></li>
+        <li><a href="cursos_editar.html">Modificar Cursos</a></li>
+    </ul>
+    <h1>Listado de Alumnos y Notas</h1>
+    <div id="alumnos_notas"></div>
+
+    <script>
+        // Función para eliminar un alumno
+        function eliminarAlumno(idAlumno) {
+            if (confirm("¿Estás seguro de que deseas eliminar este alumno?")) {
+                fetch('/eliminarAlumno?id=' + idAlumno, { method: 'POST' })
+                    .then(response => {
+                        if (response.ok) {
+                            // Recargar la página después de eliminar el alumno
+                            location.reload();
+                        } else {
+                            throw new Error('Error al eliminar el alumno');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        }
+
+        // Función para obtener los datos de los alumnos y notas
+        function obtenerAlumnosNotas() {
+            fetch('/mostrarAlumnosNotas', { method: 'POST' })
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('alumnos_notas').innerHTML = data;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Llamar a la función al cargar la página
+        obtenerAlumnosNotas();
+    </script>
+</body>
+
+</html>

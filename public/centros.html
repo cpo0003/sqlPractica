@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centros</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        #menu {
+            list-style-type: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        #menu li {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        #menu li a {
+            text-decoration: none;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            color: #333;
+            border-radius: 5px;
+        }
+
+        #menu li a:hover {
+            background-color: #e9e9e9;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Cliente Web</h1>
+    <ul id="menu">
+        <li><a href="cursos.html">Mostrar Cursos</a></li>
+        <li><a href="centros.html">Mostrar Centros</a></li>
+        <li><a href="alumnos.html">Mostrar Alumnos y Notas</a></li>
+        <li><a href="graficos.html">Mostrar Graficos</a></li>
+        <li><a href="cursos_editar.html">Modificar Cursos</a></li>
+    </ul>
+    <h1>Listado de Centros</h1>
+    <div id="centros"></div>
+
+    <script>
+        fetch('/mostrarCentros', { method: 'POST' })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('centros').innerHTML = data;
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
+</body>
+
+</html>

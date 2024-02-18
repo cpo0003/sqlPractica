@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráficos</title>
+    <!-- Incluir la librería Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #menu {
+            list-style-type: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        #menu li {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        #menu li a {
+            text-decoration: none;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            color: #333;
+            border-radius: 5px;
+        }
+
+        #menu li a:hover {
+            background-color: #e9e9e9;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Cliente Web</h1>
+    <ul id="menu">
+        <li><a href="cursos.html">Mostrar Cursos</a></li>
+        <li><a href="centros.html">Mostrar Centros</a></li>
+        <li><a href="alumnos.html">Mostrar Alumnos y Notas</a></li>
+        <li><a href="graficos.html">Mostrar Graficos</a></li>
+        <li><a href="cursos_editar.html">Modificar Cursos</a></li>
+    </ul>
+    <h1>Ratio de Alumnos Aprobados por Curso</h1>
+    <!-- Canvas para dibujar el gráfico -->
+    <canvas id="chart"></canvas>
+
+    <script>
+        // Calcular el ratio de aprobados por curso
+        function calcularRatioAprobados(data) {
+            const ratios = [];
+            data.forEach(row => {
+                const ratio = {
+                    nombre_curso: row.nombre_curso,
+                    ratio_aprobados: row.aprobados / row.total
+                };
+                ratios.push(ratio);
+            });
+            return ratios;
+        }
+
+        // Renderizar el gráfico con Chart.js
+        function renderizarGrafico(ratios) {
+            const ctx = document.getElementById('chart').getContext('2d');
+            const nombresCursos = ratios.map(curso => curso.nombre_curso);
+            const ratiosAprobados = ratios.map(curso => curso.ratio_aprobados);
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: nombresCursos,
+                    datasets: [{
+                        label: 'Ratio de aprobados',
+                        data: ratiosAprobados,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        // Obtener los datos del servidor y renderizar el gráfico
+        fetch('/ratioAprobados')
+            .then(response => response.json())
+            .then(data => {
+                const ratios = calcularRatioAprobados(data);
+                renderizarGrafico(ratios);
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
+</body>
+
+</html>

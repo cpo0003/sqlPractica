@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modificar Curso</title>
+    <style>
+        /* Estilos para el formulario */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 100px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #menu {
+            list-style-type: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        #menu li {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        #menu li a {
+            text-decoration: none;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            color: #333;
+            border-radius: 5px;
+        }
+
+        #menu li a:hover {
+            background-color: #e9e9e9;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Cliente Web</h1>
+    <ul id="menu">
+        <li><a href="cursos.html">Mostrar Cursos</a></li>
+        <li><a href="centros.html">Mostrar Centros</a></li>
+        <li><a href="alumnos.html">Mostrar Alumnos y Notas</a></li>
+        <li><a href="graficos.html">Mostrar Graficos</a></li>
+        <li><a href="cursos_editar.html">Modificar Cursos</a></li>
+    </ul>
+    <h1>Modificar Curso</h1>
+    <form id="formulario">
+        <label for="curso">Seleccionar Curso:</label>
+        <select id="curso" name="curso" onchange="cargarDatosCurso()">
+            <!-- Opciones de cursos se llenarán dinámicamente -->
+        </select>
+        <br>
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre">
+        <br>
+        <label for="nivel">Nivel:</label>
+        <input type="number" id="nivel" name="nivel">
+        <br>
+        <label for="descripcion">Descripción:</label>
+        <textarea id="descripcion" name="descripcion"></textarea>
+        <br>
+        <label for="lugar">Lugar:</label>
+        <input type="text" id="lugar" name="lugar">
+        <br>
+        <label for="fechaImportacion">Fecha de Importación:</label>
+        <input type="date" id="fechaImportacion" name="fechaImportacion">
+        <br>
+        <button type="button" onclick="actualizarCurso()">Actualizar</button>
+    </form>
+
+    <script>
+        // Función para cargar los datos del curso seleccionado
+        function cargarDatosCurso() {
+            const idCurso = document.getElementById('curso').value;
+            fetch(`/curso?id=${idCurso}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('nombre').value = data.nombre;
+                    document.getElementById('nivel').value = data.nivel;
+                    document.getElementById('descripcion').value = data.descripcion;
+                    document.getElementById('lugar').value = data.lugar;
+                    document.getElementById('fechaImportacion').value = data.fechaimportacion;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Función para actualizar el curso
+        function actualizarCurso() {
+            const idCurso = document.getElementById('curso').value;
+            const nombre = document.getElementById('nombre').value;
+            const nivel = document.getElementById('nivel').value;
+            const descripcion = document.getElementById('descripcion').value;
+            const lugar = document.getElementById('lugar').value;
+            const fechaImportacion = document.getElementById('fechaImportacion').value;
+
+            const data = {
+                id: idCurso,
+                nombre: nombre,
+                nivel: nivel,
+                descripcion: descripcion,
+                lugar: lugar,
+                fechaImportacion: fechaImportacion
+            };
+
+            fetch('/actualizarCurso', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Curso actualizado correctamente');
+                    } else {
+                        throw new Error('Error al actualizar el curso');
+                        alert('Error al actualizar el curso');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Al cargar la página, obtener la lista de cursos desde el servidor
+        fetch('/cursos')
+            .then(response => response.json())
+            .then(data => {
+                const selectCurso = document.getElementById('curso');
+                data.forEach(curso => {
+                    const option = document.createElement('option');
+                    option.value = curso.id;
+                    option.textContent = curso.nombre;
+                    selectCurso.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
+</body>
+
+</html>
